@@ -24,8 +24,7 @@ export class GradeController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async createGrade(@Body() createGradeDto: CreateGradeDto): Promise<Grade> {
-    const { title } = createGradeDto;
-    return await this.gradeService.createGrade(title);
+    return await this.gradeService.createGrade(createGradeDto);
   }
 
   @Get('')
@@ -42,8 +41,7 @@ export class GradeController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async getGrade(@Param() getGradeDto: GetGradeDto): Promise<Grade> {
-    const { id } = getGradeDto;
-    return await this.gradeService.getGrade(id);
+    return await this.gradeService.getGrade(getGradeDto);
   }
 
   @Patch(':id/update')
@@ -55,9 +53,7 @@ export class GradeController {
     @Param() getGradeDto: GetGradeDto,
     @Body() updateGradeDto: UpdateGradeDto,
   ): Promise<Grade> {
-    const { id } = getGradeDto;
-    const { title } = updateGradeDto;
-    return this.gradeService.updateGrade(id, title);
+    return this.gradeService.updateGrade(getGradeDto, updateGradeDto);
   }
 
   @Delete(':id/delete')
@@ -66,7 +62,6 @@ export class GradeController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   async deleteGrade(@Param() getGradeDto: GetGradeDto): Promise<void> {
-    const { id } = getGradeDto;
-    return await this.gradeService.deleteGrade(id);
+    return await this.gradeService.deleteGrade(getGradeDto);
   }
 }
