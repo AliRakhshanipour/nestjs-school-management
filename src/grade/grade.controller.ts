@@ -7,38 +7,66 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateGradeDto } from './DTO/create-grade.dto';
+import { GetGradeDto } from './DTO/get-grade.dto';
+import { UpdateGradeDto } from './DTO/update-grade.dto';
 import { Grade } from './grade.entity';
 import { GradeService } from './grade.service';
 
 @Controller('grade')
+@ApiTags('Grades')
 export class GradeController {
   constructor(private gradeService: GradeService) {}
 
   @Post('create')
-  async createGrade(@Body('title') title: string): Promise<Grade> {
+  @ApiResponse({ status: 201, description: 'Grade created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async createGrade(@Body() createGradeDto: CreateGradeDto): Promise<Grade> {
+    const { title } = createGradeDto;
     return await this.gradeService.createGrade(title);
   }
 
   @Get('')
+  @ApiResponse({ status: 200, description: 'Grades fetched successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async getAllGrades(): Promise<Grade[]> {
     return await this.gradeService.getAllGrades();
   }
 
   @Get(':id')
-  async getGrade(@Param('id') id: number): Promise<Grade> {
+  @ApiParam({ name: 'id', type: String, description: 'ID of the grade' })
+  @ApiResponse({ status: 200, description: 'Grade fetched successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async getGrade(@Param() getGradeDto: GetGradeDto): Promise<Grade> {
+    const { id } = getGradeDto;
     return await this.gradeService.getGrade(id);
   }
 
   @Patch(':id/update')
+  @ApiParam({ name: 'id', type: String, description: 'ID of the grade' })
+  @ApiResponse({ status: 200, description: 'Grade updated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
   async updateGrade(
-    @Param('id') id: number,
-    @Body('title') title: string,
+    @Param() getGradeDto: GetGradeDto,
+    @Body() updateGradeDto: UpdateGradeDto,
   ): Promise<Grade> {
+    const { id } = getGradeDto;
+    const { title } = updateGradeDto;
     return this.gradeService.updateGrade(id, title);
   }
 
   @Delete(':id/delete')
-  async deleteGrade(@Param('id') id: number): Promise<void> {
+  @ApiParam({ name: 'id', type: String, description: 'ID of the grade' })
+  @ApiResponse({ status: 200, description: 'Grade deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async deleteGrade(@Param() getGradeDto: GetGradeDto): Promise<void> {
+    const { id } = getGradeDto;
     return await this.gradeService.deleteGrade(id);
   }
 }

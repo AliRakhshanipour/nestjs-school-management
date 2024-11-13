@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { CreateUserDto } from './DTO/create-user.dto';
-import { GetUserById } from './DTO/get-user.dto';
+import { GetUserByIdDto } from './DTO/get-user.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 
@@ -22,7 +22,7 @@ export class UserService {
     return users;
   }
 
-  async getUser(getUserById: GetUserById): Promise<User> {
+  async getUser(getUserById: GetUserByIdDto): Promise<User> {
     const { id } = getUserById;
     const user = await this.userRepository.findOne({
       where: { id },

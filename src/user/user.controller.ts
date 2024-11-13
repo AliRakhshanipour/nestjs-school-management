@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto, CreateUserResponseDto } from './DTO/create-user.dto';
-import { GetUserById } from './DTO/get-user.dto';
+import { GetUserByIdDto } from './DTO/get-user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -50,7 +50,12 @@ export class UserController {
   }
 
   @Get('/:id')
-  async getUser(@Param() getUserById: GetUserById): Promise<User> {
+  @ApiOperation({ summary: 'get user by id' })
+  @ApiResponse({ status: 200, description: 'user fetched successfully' })
+  @ApiResponse({ status: 404, description: 'user not found' })
+  @ApiResponse({ status: 400, description: 'bad request' })
+  @ApiResponse({ status: 500, description: 'internal server error' })
+  async getUser(@Param() getUserById: GetUserByIdDto): Promise<User> {
     try {
       return this.userService.getUser(getUserById);
     } catch (error) {
