@@ -40,6 +40,10 @@ export class GradeRepository extends Repository<Grade> {
     }
   }
 
+  async findGrade(id: number): Promise<Grade> {
+    return await this.findOne({ where: { id } });
+  }
+
   async updateGrade(id: number, title: string): Promise<Grade> {
     try {
       const grade = await this.findOne({ where: { id } });
@@ -61,19 +65,9 @@ export class GradeRepository extends Repository<Grade> {
   }
 
   async deleteGrade(id: number): Promise<void> {
-    try {
-      const result = await this.delete(id);
-      if (result.affected === 0) {
-        throw new BadRequestException('Grade not found or deletion failed');
-      }
-    } catch (error) {
-      this.logger.error(
-        `Failed to delete grade with ID ${id}: ${error.message}`,
-        error.stack,
-      );
-      throw new BadRequestException(
-        'An error occurred while deleting the grade',
-      );
+    const result = await this.delete(id);
+    if (result.affected === 0) {
+      throw new BadRequestException('Grade not found or deletion failed');
     }
   }
 }
