@@ -82,4 +82,24 @@ export class FieldService {
       );
     }
   }
+
+  async deleteField(id: number): Promise<void> {
+    const field = await this.fieldRepository.findOne({ where: { id } });
+    if (!field) {
+      throw new NotFoundException(`No field found with ID ${id}`);
+    }
+
+    try {
+      await this.fieldRepository.delete(field);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(
+          'Invalid data provided for deleting field',
+        );
+      }
+      throw new InternalServerErrorException(
+        'An error occurred while deleting the field',
+      );
+    }
+  }
 }

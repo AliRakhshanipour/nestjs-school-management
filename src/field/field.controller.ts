@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFieldDto } from './DTO/create-field.dto';
 import { UpdateFieldDto } from './DTO/update-field.dto';
@@ -33,7 +41,7 @@ export class FieldController {
     return await this.fieldService.getFieldById(id);
   }
 
-  @Patch(':id')
+  @Patch(':id/update')
   @ApiParam({
     name: 'id',
     type: Number,
@@ -48,5 +56,19 @@ export class FieldController {
     @Body() updateFieldDto: UpdateFieldDto,
   ): Promise<Field> {
     return await this.fieldService.updateField(id, updateFieldDto);
+  }
+
+  @Delete(':id/delete')
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID of the field to delete',
+  })
+  @ApiResponse({ status: 200, description: 'Field deleted successfully' })
+  @ApiResponse({ status: 404, description: 'No field found with this ID' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async deleteField(@Param('id') id: number): Promise<void> {
+    await this.fieldService.deleteField(id);
   }
 }
