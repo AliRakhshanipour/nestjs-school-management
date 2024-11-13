@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { GradeModule } from './grade/grade.module';
+import { FieldModule } from './field/field.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GradeModule } from './grade/grade.module';
     UserModule,
     AuthModule,
     GradeModule,
+    FieldModule,
   ],
   controllers: [],
   providers: [],
