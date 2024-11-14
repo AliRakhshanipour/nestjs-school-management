@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Field } from '../field/field.entity';
 import { Grade } from '../grade/grade.entity';
@@ -12,10 +13,12 @@ export class Class {
 
   // Many classes belong to one grade
   @ManyToOne(() => Grade, (grade) => grade.classes)
+  @Expose()
   grade: Grade;
 
   // Many classes belong to one field
   @ManyToOne(() => Field, (field) => field.classes)
+  @Expose()
   field: Field;
 
   @Column({ default: 30 })
