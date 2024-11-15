@@ -16,6 +16,9 @@ export class Student {
   fatherName: string;
 
   @Column({ unique: true })
+  nationalCode: string;
+
+  @Column({ unique: true })
   phoneNumber: string;
 
   @Column({ nullable: true })
@@ -30,6 +33,8 @@ export class Student {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Class, (classEntity) => classEntity.students)
+  @ManyToOne(() => Class, (classEntity) => classEntity.students, {
+    nullable: true,
+  })
   class: Class;
 }

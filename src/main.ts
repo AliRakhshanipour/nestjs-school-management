@@ -1,15 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { ClassResponseInterceptor } from './interceptors/class-response.interceptor';
-import { ExcludePasswordInterceptor } from './interceptors/user-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalInterceptors(
-    new ExcludePasswordInterceptor(),
-    new ClassResponseInterceptor(),
-  );
+  app
+    .useGlobalInterceptors
+    // new ExcludePasswordInterceptor(),
+    // new ClassResponseInterceptor(),
+    // new StudentInterceptor(),
+    ();
 
   const config = new DocumentBuilder()
     .setTitle('School Management API')

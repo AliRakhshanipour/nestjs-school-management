@@ -39,6 +39,15 @@ export class CreateStudentDto {
   fatherName: string;
 
   @ApiProperty({
+    description: 'National Code of the student',
+    example: '0651230980',
+  })
+  @IsNotEmpty()
+  @IsString()
+  @Length(10)
+  nationalCode: string;
+
+  @ApiProperty({
     description: 'Primary phone number of the student',
     example: '+1234567890',
   })
@@ -82,11 +91,4 @@ export class CreateStudentDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
-
-  @ApiProperty({
-    description: 'ID of the class to which the student belongs',
-    example: 1,
-  })
-  @IsNotEmpty()
-  classId: number;
 }
