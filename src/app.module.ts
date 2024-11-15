@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { GradeModule } from './grade/grade.module';
 import { FieldModule } from './field/field.module';
 import { ClassModule } from './class/class.module';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ClassModule } from './class/class.module';
     GradeModule,
     FieldModule,
     ClassModule,
+    StudentModule,
   ],
   controllers: [],
   providers: [],
