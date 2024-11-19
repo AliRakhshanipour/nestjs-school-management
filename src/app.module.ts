@@ -7,6 +7,7 @@ import { FieldModule } from './field/field.module';
 import { ClassModule } from './class/class.module';
 import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/teacher.module';
+import { SessionModule } from './session/session.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TeacherModule } from './teacher/teacher.module';
     ClassModule,
     StudentModule,
     TeacherModule,
+    SessionModule,
   ],
   controllers: [],
   providers: [],
