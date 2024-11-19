@@ -6,8 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ClassResponseInterceptor } from 'src/interceptors/class-response.interceptor';
 import { Class } from './class.entity';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './DTO/create-class.dto';
@@ -38,6 +40,7 @@ export class ClassController {
     type: [Class],
   })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @UseInterceptors(ClassResponseInterceptor)
   async getClasses(): Promise<Class[]> {
     return await this.classService.getClasses();
   }
@@ -47,6 +50,7 @@ export class ClassController {
   @ApiResponse({ status: 200, description: 'class retrieved successfully' })
   @ApiResponse({ status: 404, description: 'class not found' })
   @ApiResponse({ status: 500, description: 'internal server error' })
+  @UseInterceptors(ClassResponseInterceptor)
   async getClassById(@Param('id') id: number): Promise<Class> {
     return await this.classService.getClassById(id);
   }

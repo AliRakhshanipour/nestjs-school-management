@@ -4,12 +4,8 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app
-    .useGlobalInterceptors
-    // new ExcludePasswordInterceptor(),
-    // new ClassResponseInterceptor(),
-    // new StudentInterceptor(),
-    ();
+
+  app.useGlobalInterceptors();
 
   const config = new DocumentBuilder()
     .setTitle('School Management API')

@@ -1,21 +1,17 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
-  InternalServerErrorException,
   Param,
+  Patch,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiConsumes,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TransformStudentResponseInterceptor } from 'src/interceptors/student-response.interceptor';
 import { CreateStudentDto } from './DTO/create-student.dto';
+import { UpdateStudentDto } from './DTO/update-student.dto';
 import { Student } from './student.entity';
 import { StudentService } from './student.service';
 
@@ -26,7 +22,6 @@ export class StudentController {
 
   @Post('create')
   @ApiOperation({ summary: 'Create a new student with file upload' })
-  @ApiConsumes('multipart/form-data', 'json')
   @ApiResponse({ status: 201, description: 'Student created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({
@@ -59,19 +54,16 @@ export class StudentController {
     type: [Student],
   })
   @ApiResponse({
+    status: 404,
+    description: 'No Student Found',
+  })
+  @ApiResponse({
     status: 500,
     description: 'Internal server error',
   })
   @UseInterceptors(TransformStudentResponseInterceptor) // Apply the interceptor here
   async getAllStudents(): Promise<Student[]> {
-    try {
-      return await this.studentService.getAllStudents();
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(
-        'Error fetching students: ' + error.message,
-      );
-    }
+    return await this.studentService.getAllStudents();
   }
 
   @Get(':id')
@@ -84,5 +76,28 @@ export class StudentController {
     const student = await this.studentService.getStudentById(id);
 
     return student;
+  }
+
+  @Patch(':id/update')
+  @ApiParam({ name: 'id', type: Number, description: 'ID of the student' })
+  @ApiResponse({ status: '2XX', description: 'student updated successfully' })
+  @ApiResponse({ status: '4XX', description: 'student not found' })
+  @ApiResponse({ status: '5XX', description: 'internal server error' })
+  async updateStudent(
+    @Param('id') id: number,
+    @Body() updateStudentDto: UpdateStudentDto,
+  ): Promise<Student> {
+    return await this.studentService.updateStudent(id, updateStudentDto);
+  }
+
+  @Delete(':id/delete')
+  @ApiParam({ name: 'id', type: Number, description: 'ID of the student' })
+  @ApiResponse({ status: '2XX', description: 'student deleted successfully' })
+  @ApiResponse({ status: '4XX', description: 'student not found' })
+  @ApiResponse({ status: '5XX', description: 'internal server error' })
+  async deleteStudent(@Param('id') id: number): Promise<void> {
+    console.log(id);
+
+    return await this.studentService.deleteStudent(id);
   }
 }
