@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
   ApiConsumes,
   ApiOperation,
@@ -6,6 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateSessionDto } from './DTO/create-session.dto';
+import { SessionResponseDto } from './DTO/response-session.dto';
 import { Session } from './session.entity';
 import { SessionService } from './session.service';
 
@@ -41,5 +42,41 @@ export class SessionController {
     @Body() createSessionDto: CreateSessionDto,
   ): Promise<Session> {
     return this.sessionService.createSession(createSessionDto);
+  }
+
+  @Get('')
+  @ApiOperation({
+    summary: 'Get all sessions',
+    description: 'get all sessions',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Sessions retrieved successfully.',
+    type: Session,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error.',
+  })
+  async getAllSessions(): Promise<SessionResponseDto[]> {
+    return await this.sessionService.getAllSessions();
+  }
+
+  @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Session retrieved successfully.',
+    type: Session,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Session not found.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error.',
+  })
+  async getSessionById(@Param('id') id: number): Promise<SessionResponseDto> {
+    return await this.sessionService.getSessionById(id);
   }
 }

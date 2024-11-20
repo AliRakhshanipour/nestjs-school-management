@@ -8,6 +8,7 @@ import { Class } from 'src/class/class.entity';
 import { Teacher } from 'src/teacher/teacher.entity';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateSessionDto } from './DTO/create-session.dto';
+import { SessionResponseDto } from './DTO/response-session.dto';
 import { Session } from './session.entity';
 
 @Injectable()
@@ -88,5 +89,38 @@ export class SessionService {
     });
 
     return this.sessionRepository.save(session);
+  }
+
+  async getAllSessions(): Promise<SessionResponseDto[]> {
+    const sessions = await this.sessionRepository.find({
+      relations: ['teacher', 'class'], // Ensure related entities are loaded
+    });
+
+    return sessions.map((session) => this.sessionTransformToDto(session));
+  }
+
+  async getSessionById(id: number): Promise<SessionResponseDto> {
+    const session = await this.sessionRepository.findOne({
+      where: { id },
+      relations: ['teacher', 'class'],
+    });
+
+    if (!session) {
+      throw new NotFoundException(`Session with ID ${id} not found`);
+    }
+
+    return this.sessionTransformToDto(session);
+  }
+
+  private sessionTransformToDto(session: Session): SessionResponseDto {
+    return {
+      id: session.id,
+      title: session.title,
+      startTime: session.startTime,
+      endTime: session.endTime,
+      day: session.day,
+      teacherFullName: `${session.teacher.firstName} ${session.teacher.lastName}`,
+      classTitle: session.class.title,
+    };
   }
 }
