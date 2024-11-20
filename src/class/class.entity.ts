@@ -1,4 +1,5 @@
 import { Expose } from 'class-transformer';
+import { Session } from 'src/session/session.entity';
 import { Student } from 'src/student/student.entity';
 import {
   Column,
@@ -31,4 +32,7 @@ export class Class {
 
   @OneToMany(() => Student, (student) => student.class)
   students: Student[];
+
+  @OneToMany(() => Session, (session) => session.class)
+  sessions: Session[];
 }

@@ -11,7 +11,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTeacherDto } from './DTO/create-teacher.dto';
 import { UpdateTeacherDto } from './DTO/update-teacher.dto';
 import { GetAllTeachersResponse } from './interfaces/get-teachers.interface';
-import { Teacher } from './teache.entity';
+import { Teacher } from './teacher.entity';
 import { TeacherService } from './teacher.service';
 
 @Controller('teacher')

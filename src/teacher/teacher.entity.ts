@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Session } from 'src/session/session.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Teacher {
@@ -22,6 +23,10 @@ export class Teacher {
 
   @Column({ nullable: true })
   address: string;
+
+  // Update the relationship to @OneToMany
+  @OneToMany(() => Session, (session) => session.teacher)
+  sessions: Session[];
 
   @Column({
     default: true,

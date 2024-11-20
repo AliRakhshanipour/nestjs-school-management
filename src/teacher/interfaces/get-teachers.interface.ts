@@ -1,4 +1,4 @@
-import { Teacher } from '../teache.entity';
+import { Teacher } from '../teacher.entity';
 
 export interface GetAllTeachersResponse {
   teachers: Teacher[];

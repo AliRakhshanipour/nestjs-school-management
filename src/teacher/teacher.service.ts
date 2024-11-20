@@ -10,7 +10,7 @@ import { UpdateTeacherDto } from './DTO/update-teacher.dto';
 import { NationalCodeExistsException } from './error-handlers/national-code-exists.exception';
 import { PersonalCodeExistsException } from './error-handlers/personal-code-exists.exception';
 import { GetAllTeachersResponse } from './interfaces/get-teachers.interface';
-import { Teacher } from './teache.entity';
+import { Teacher } from './teacher.entity';
 import { TeacherRepository } from './teacher.repository';
 @Injectable()
 export class TeacherService {
