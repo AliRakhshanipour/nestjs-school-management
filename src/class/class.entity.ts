@@ -33,6 +33,8 @@ export class Class {
   @OneToMany(() => Student, (student) => student.class)
   students: Student[];
 
-  @OneToMany(() => Session, (session) => session.class)
+  @OneToMany(() => Session, (session) => session.class, {
+    cascade: false, // Do not cascade delete for sessions when Class is deleted
+  })
   sessions: Session[];
 }

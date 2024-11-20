@@ -24,8 +24,9 @@ export class Teacher {
   @Column({ nullable: true })
   address: string;
 
-  // Update the relationship to @OneToMany
-  @OneToMany(() => Session, (session) => session.teacher)
+  @OneToMany(() => Session, (session) => session.teacher, {
+    cascade: false, // Do not cascade delete for sessions when Teacher is deleted
+  })
   sessions: Session[];
 
   @Column({
