@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import {
   ApiConsumes,
   ApiOperation,
@@ -78,5 +78,23 @@ export class SessionController {
   })
   async getSessionById(@Param('id') id: number): Promise<SessionResponseDto> {
     return await this.sessionService.getSessionById(id);
+  }
+
+  @ApiResponse({
+    status: '2XX',
+    description: 'Session deleted successfully.',
+    type: Session,
+  })
+  @ApiResponse({
+    status: '4XX',
+    description: 'Session not found.',
+  })
+  @ApiResponse({
+    status: '5XX',
+    description: 'Internal server error.',
+  })
+  @Delete(':id/delete')
+  async deleteSession(@Param('id') id: number): Promise<void> {
+    await this.sessionService.deleteSession(id);
   }
 }

@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -110,6 +111,18 @@ export class SessionService {
     }
 
     return this.sessionTransformToDto(session);
+  }
+
+  async deleteSession(id: number): Promise<void> {
+    try {
+      const session = await this.teacherRepository.findOne({ where: { id } });
+      if (!session)
+        throw new NotFoundException(`session not found with this id :${id}`);
+
+      await this.teacherRepository.delete(session);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   private sessionTransformToDto(session: Session): SessionResponseDto {
