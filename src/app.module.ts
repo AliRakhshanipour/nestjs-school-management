@@ -8,6 +8,7 @@ import { ClassModule } from './class/class.module';
 import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { SessionModule } from './session/session.module';
+import { RoomModule } from './room/room.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SessionModule } from './session/session.module';
     StudentModule,
     TeacherModule,
     SessionModule,
+    RoomModule,
   ],
   controllers: [],
   providers: [],
