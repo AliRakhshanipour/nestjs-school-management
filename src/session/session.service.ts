@@ -8,12 +8,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as _ from 'lodash';
 import { Class } from 'src/class/class.entity';
 import { Teacher } from 'src/teacher/teacher.entity';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import {
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { CreateSessionDto } from './DTO/create-session.dto';
 import { SessionResponseDto } from './DTO/response-session.dto';
 import { UpdateSessionDto } from './DTO/update-session.dto';
 import { DayOfWeek, Session } from './session.entity';
 import { Room } from '../room/room.entity';
+import { FilterSessionDto } from './DTO/filter-session.dto';
 
 @Injectable()
 export class SessionService {
@@ -83,10 +89,36 @@ export class SessionService {
     }
   }
 
-  async getAllSessions(): Promise<SessionResponseDto[]> {
-    const sessions: Session[] = await this.sessionRepository.find({
-      relations: ['teacher', 'class', 'room'],
-    });
+  async getAllSessions(
+    filterSessionDto: FilterSessionDto,
+  ): Promise<SessionResponseDto[]> {
+    const { teacherId, roomId, classId, studentId } = filterSessionDto;
+
+    const queryBuilder: SelectQueryBuilder<Session> = this.sessionRepository
+      .createQueryBuilder('session')
+      .leftJoinAndSelect('session.teacher', 'teacher')
+      .leftJoinAndSelect('session.class', 'class')
+      .leftJoinAndSelect('session.room', 'room');
+
+    if (teacherId) {
+      queryBuilder.andWhere('teacher.id = :teacherId', { teacherId });
+    }
+
+    if (roomId) {
+      queryBuilder.andWhere('room.id = :roomId', { roomId });
+    }
+
+    if (classId) {
+      queryBuilder.andWhere('class.id = :classId', { classId });
+    }
+
+    if (studentId) {
+      queryBuilder
+        .innerJoin('class.students', 'student')
+        .andWhere('student.id = :studentId', { studentId });
+    }
+
+    const sessions: Session[] = await queryBuilder.getMany();
 
     return sessions.map(
       (session: Session): SessionResponseDto =>
@@ -95,7 +127,7 @@ export class SessionService {
   }
 
   async getSessionById(id: number): Promise<SessionResponseDto> {
-    const session = await this.sessionRepository.findOne({
+    const session: Session = await this.sessionRepository.findOne({
       where: { id },
       relations: ['teacher', 'class', 'room'],
     });
@@ -110,7 +142,7 @@ export class SessionService {
   ): Promise<SessionResponseDto> {
     const session: Session = await this.sessionRepository.findOne({
       where: { id },
-      relations: ['teacher', 'class'],
+      relations: ['teacher', 'class', 'room'],
     });
     console.log(session);
 
@@ -207,9 +239,9 @@ export class SessionService {
       day: session.day,
       teacherFullName: session.teacher
         ? `${session.teacher.firstName} ${session.teacher.lastName}`
-        : 'Unknown Teacher', // Fallback if teacher is null or undefined
-      classTitle: session.class ? session.class.title : 'Unknown Class', // Fallback if class is null or undefined
-      roomNumber: session.room ? session.room.number : null, // Fallback if room is null or undefined
+        : 'Unknown Teacher',
+      classTitle: session.class ? session.class.title : 'Unknown Class',
+      roomNumber: session.room ? session.room.number : null,
     };
   }
 }

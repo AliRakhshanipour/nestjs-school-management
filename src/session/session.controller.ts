@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateSessionDto } from './DTO/create-session.dto';
 import { SessionResponseDto } from './DTO/response-session.dto';
 import { UpdateSessionDto } from './DTO/update-session.dto';
 import { SessionService } from './session.service';
+import { FilterSessionDto } from './DTO/filter-session.dto';
 
 @Controller('sessions')
 @ApiTags('Sessions')
@@ -46,7 +48,7 @@ export class SessionController {
     return this.sessionService.createSession(createSessionDto);
   }
 
-  @Get()
+  @Get('')
   @ApiOperation({
     summary: 'Retrieve all sessions',
     description:
@@ -61,8 +63,10 @@ export class SessionController {
     status: 500,
     description: 'Internal server error.',
   })
-  async getAllSessions(): Promise<SessionResponseDto[]> {
-    return this.sessionService.getAllSessions();
+  async getAllSessions(
+    @Query() filterSessionDto: FilterSessionDto,
+  ): Promise<SessionResponseDto[]> {
+    return await this.sessionService.getAllSessions(filterSessionDto);
   }
 
   @Get(':id')
