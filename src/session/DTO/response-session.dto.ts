@@ -24,4 +24,7 @@ export class SessionResponseDto {
 
   @ApiProperty({ description: 'Class Title', example: '103' })
   classTitle: string;
+
+  @ApiProperty({ description: 'Room number', example: 12 })
+  roomNumber?: number;
 }

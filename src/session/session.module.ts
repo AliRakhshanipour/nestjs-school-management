@@ -5,10 +5,12 @@ import { Teacher } from 'src/teacher/teacher.entity';
 import { SessionController } from './session.controller';
 import { Session } from './session.entity';
 import { SessionService } from './session.service';
+import { Room } from '../room/room.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Session, Class, Teacher])],
+  imports: [TypeOrmModule.forFeature([Session, Class, Teacher, Room])],
   controllers: [SessionController],
   providers: [SessionService],
+  exports: [SessionService],
 })
 export class SessionModule {}

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Session } from '../session/session.entity';
 
 export enum RoomCategory {
   THEORY = 'Theory',
@@ -27,4 +28,9 @@ export class Room {
     default: RoomCategory.THEORY,
   })
   category: RoomCategory;
+
+  @OneToMany(() => Session, (session: Session): Room => session.room, {
+    cascade: true,
+  })
+  sessions: Session[];
 }

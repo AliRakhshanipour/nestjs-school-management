@@ -43,4 +43,10 @@ export class CreateSessionDto {
   @Transform(({ value }) => parseInt(value, 10)) // Parse '1' to 1
   @IsNumber()
   classId: number;
+
+  @ApiProperty({ description: 'Room ID', example: 1 })
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value, 10)) // Parse '1' to 1
+  @IsNumber()
+  roomId: number;
 }

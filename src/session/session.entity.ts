@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Class } from '../class/class.entity';
 import { Teacher } from '../teacher/teacher.entity';
+import { Room } from '../room/room.entity';
 
 // Define the enum for days of the week
 export enum DayOfWeek {
@@ -31,16 +32,25 @@ export class Session {
   })
   day: DayOfWeek;
 
-  @ManyToOne(() => Teacher, (teacher) => teacher.sessions, {
+  @ManyToOne(() => Teacher, (teacher: Teacher): Session[] => teacher.sessions, {
     cascade: true,
     onDelete: 'CASCADE',
     nullable: false,
   })
   teacher: Teacher;
 
-  @ManyToOne(() => Class, (classEntity) => classEntity.sessions, {
-    onDelete: 'CASCADE',
-    nullable: false,
-  })
+  @ManyToOne(
+    () => Class,
+    (classEntity: Class): Session[] => classEntity.sessions,
+    {
+      onDelete: 'CASCADE',
+      nullable: false,
+    },
+  )
   class: Class;
+
+  @ManyToOne(() => Room, (room: Room): Session[] => room.sessions, {
+    nullable: true,
+  })
+  room: Room;
 }

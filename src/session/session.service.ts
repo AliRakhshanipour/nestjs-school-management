@@ -13,6 +13,7 @@ import { CreateSessionDto } from './DTO/create-session.dto';
 import { SessionResponseDto } from './DTO/response-session.dto';
 import { UpdateSessionDto } from './DTO/update-session.dto';
 import { DayOfWeek, Session } from './session.entity';
+import { Room } from '../room/room.entity';
 
 @Injectable()
 export class SessionService {
@@ -23,33 +24,55 @@ export class SessionService {
     private readonly teacherRepository: Repository<Teacher>,
     @InjectRepository(Class)
     private readonly classRepository: Repository<Class>,
+    @InjectRepository(Room)
+    private readonly roomRepository: Repository<Room>,
   ) {}
 
   async createSession(
     createSessionDto: CreateSessionDto,
   ): Promise<SessionResponseDto> {
-    const { teacherId, classId, startTime, endTime, day, title } =
+    const { teacherId, classId, startTime, endTime, day, title, roomId } =
       createSessionDto;
 
-    const teacher = await this.validateAndFetchTeacher(teacherId);
-    const classEntity = await this.validateAndFetchClass(classId);
+    const teacher: Teacher = await this.validateAndFetchTeacher(teacherId);
+    const classEntity: Class = await this.validateAndFetchClass(classId);
+    const room: Room = await this.validateAndFetchRoom(roomId);
 
-    // Check for overlapping sessions
-    await this.checkOverlappingSessions(
-      teacher,
-      classEntity,
-      day,
-      startTime,
-      endTime,
-    );
+    const sessionCount: number = await this.sessionRepository.count({
+      where: { room: { id: roomId }, day },
+    });
 
-    const session = this.sessionRepository.create({
+    if (sessionCount >= 4) {
+      throw new ConflictException(
+        `Room with ID ${roomId} already has the maximum of 4 sessions on ${day}.`,
+      );
+    }
+
+    const overlappingSession: Session = await this.sessionRepository.findOne({
+      where: [
+        {
+          room: { id: roomId },
+          day,
+          startTime: LessThanOrEqual(endTime),
+          endTime: MoreThanOrEqual(startTime),
+        },
+      ],
+    });
+
+    if (overlappingSession) {
+      throw new ConflictException(
+        `Room with ID ${roomId} has an overlapping session on ${day} between ${startTime} and ${endTime}.`,
+      );
+    }
+
+    const session: Session = this.sessionRepository.create({
       title,
       startTime,
       endTime,
       day,
       teacher,
       class: classEntity,
+      room,
     });
 
     try {
@@ -61,16 +84,20 @@ export class SessionService {
   }
 
   async getAllSessions(): Promise<SessionResponseDto[]> {
-    const sessions = await this.sessionRepository.find({
-      relations: ['teacher', 'class'],
+    const sessions: Session[] = await this.sessionRepository.find({
+      relations: ['teacher', 'class', 'room'],
     });
-    return sessions.map((session) => this.sessionTransformToDto(session));
+
+    return sessions.map(
+      (session: Session): SessionResponseDto =>
+        this.sessionTransformToDto(session),
+    );
   }
 
   async getSessionById(id: number): Promise<SessionResponseDto> {
     const session = await this.sessionRepository.findOne({
       where: { id },
-      relations: ['teacher', 'class'],
+      relations: ['teacher', 'class', 'room'],
     });
     if (!session)
       throw new NotFoundException(`Session with ID ${id} not found`);
@@ -81,7 +108,7 @@ export class SessionService {
     id: number,
     updateSessionDto: UpdateSessionDto,
   ): Promise<SessionResponseDto> {
-    const session = await this.sessionRepository.findOne({
+    const session: Session = await this.sessionRepository.findOne({
       where: { id },
       relations: ['teacher', 'class'],
     });
@@ -125,6 +152,12 @@ export class SessionService {
     if (!classEntity)
       throw new NotFoundException(`Class with ID ${id} not found`);
     return classEntity;
+  }
+
+  private async validateAndFetchRoom(id: number): Promise<Room> {
+    const room: Room = await this.roomRepository.findOne({ where: { id } });
+    if (!room) throw new NotFoundException(`Class with ID ${id} not found`);
+    return room;
   }
 
   private async checkOverlappingSessions(
@@ -172,8 +205,11 @@ export class SessionService {
       startTime: session.startTime,
       endTime: session.endTime,
       day: session.day,
-      teacherFullName: `${session.teacher.firstName} ${session.teacher.lastName}`,
-      classTitle: session.class.title,
+      teacherFullName: session.teacher
+        ? `${session.teacher.firstName} ${session.teacher.lastName}`
+        : 'Unknown Teacher', // Fallback if teacher is null or undefined
+      classTitle: session.class ? session.class.title : 'Unknown Class', // Fallback if class is null or undefined
+      roomNumber: session.room ? session.room.number : null, // Fallback if room is null or undefined
     };
   }
 }
