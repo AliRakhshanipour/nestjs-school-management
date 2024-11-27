@@ -144,7 +144,6 @@ export class SessionService {
       where: { id },
       relations: ['teacher', 'class', 'room'],
     });
-    console.log(session);
 
     if (!session)
       throw new NotFoundException(`Session with ID ${id} not found`);
@@ -158,7 +157,8 @@ export class SessionService {
     Object.assign(session, _.omitBy(otherData, _.isNil));
 
     try {
-      const updatedSession = await this.sessionRepository.save(session);
+      const updatedSession: Session =
+        await this.sessionRepository.save(session);
       return this.sessionTransformToDto(updatedSession);
     } catch (error) {
       throw new InternalServerErrorException('Error updating session');
@@ -166,21 +166,27 @@ export class SessionService {
   }
 
   async deleteSession(id: number): Promise<void> {
-    const session = await this.sessionRepository.findOne({ where: { id } });
+    const session: Session = await this.sessionRepository.findOne({
+      where: { id },
+    });
     if (!session)
       throw new NotFoundException(`Session with ID ${id} not found`);
     await this.sessionRepository.delete(id);
   }
 
   private async validateAndFetchTeacher(id: number): Promise<Teacher> {
-    const teacher = await this.teacherRepository.findOne({ where: { id } });
+    const teacher: Teacher = await this.teacherRepository.findOne({
+      where: { id },
+    });
     if (!teacher)
       throw new NotFoundException(`Teacher with ID ${id} not found`);
     return teacher;
   }
 
   private async validateAndFetchClass(id: number): Promise<Class> {
-    const classEntity = await this.classRepository.findOne({ where: { id } });
+    const classEntity: Class = await this.classRepository.findOne({
+      where: { id },
+    });
     if (!classEntity)
       throw new NotFoundException(`Class with ID ${id} not found`);
     return classEntity;
@@ -188,7 +194,7 @@ export class SessionService {
 
   private async validateAndFetchRoom(id: number): Promise<Room> {
     const room: Room = await this.roomRepository.findOne({ where: { id } });
-    if (!room) throw new NotFoundException(`Class with ID ${id} not found`);
+    if (!room) throw new NotFoundException(`Room with ID ${id} not found`);
     return room;
   }
 
@@ -199,31 +205,33 @@ export class SessionService {
     startTime: string,
     endTime: string,
   ): Promise<void> {
-    const overlappingClassSession = await this.sessionRepository.findOne({
-      where: [
-        {
-          class: classEntity,
-          day,
-          startTime: LessThanOrEqual(endTime),
-          endTime: MoreThanOrEqual(startTime),
-        },
-      ],
-    });
+    const overlappingClassSession: Session =
+      await this.sessionRepository.findOne({
+        where: [
+          {
+            class: classEntity,
+            day,
+            startTime: LessThanOrEqual(endTime),
+            endTime: MoreThanOrEqual(startTime),
+          },
+        ],
+      });
 
     if (overlappingClassSession) {
       throw new ConflictException('Overlapping session exists for this class');
     }
 
-    const overlappingTeacherSession = await this.sessionRepository.findOne({
-      where: [
-        {
-          teacher,
-          day,
-          startTime: LessThanOrEqual(endTime),
-          endTime: MoreThanOrEqual(startTime),
-        },
-      ],
-    });
+    const overlappingTeacherSession: Session =
+      await this.sessionRepository.findOne({
+        where: [
+          {
+            teacher,
+            day,
+            startTime: LessThanOrEqual(endTime),
+            endTime: MoreThanOrEqual(startTime),
+          },
+        ],
+      });
 
     if (overlappingTeacherSession) {
       throw new ConflictException('Teacher has another overlapping session');

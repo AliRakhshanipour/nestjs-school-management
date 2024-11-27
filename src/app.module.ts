@@ -9,6 +9,7 @@ import { StudentModule } from './student/student.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { SessionModule } from './session/session.module';
 import { RoomModule } from './room/room.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { RoomModule } from './room/room.module';
     TeacherModule,
     SessionModule,
     RoomModule,
+    AttendanceModule,
   ],
   controllers: [],
   providers: [],

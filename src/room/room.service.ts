@@ -65,7 +65,7 @@ export class RoomService {
 
   async getRoomById(id: number): Promise<Room> {
     try {
-      const room = await this.roomRepository.findOne({ where: { id } });
+      const room: Room = await this.roomRepository.findOne({ where: { id } });
       if (!room) {
         throw new NotFoundException(`no room found with this id: ${id}`);
       }
@@ -82,7 +82,9 @@ export class RoomService {
     updateRoomDto: UpdateRoomDTO,
   ): Promise<Room> {
     try {
-      const room = await this.roomRepository.findOne({ where: { id: roomId } });
+      const room: Room = await this.roomRepository.findOne({
+        where: { id: roomId },
+      });
       if (!room) {
         throw new NotFoundException(`no room found with this id: ${roomId}`);
       }
@@ -98,7 +100,9 @@ export class RoomService {
 
   async deleteRoom(roomId: number): Promise<void> {
     try {
-      const room = await this.roomRepository.findOne({ where: { id: roomId } });
+      const room: Room = await this.roomRepository.findOne({
+        where: { id: roomId },
+      });
       if (!room) {
         throw new NotFoundException(`no room found with this id: ${roomId}`);
       }

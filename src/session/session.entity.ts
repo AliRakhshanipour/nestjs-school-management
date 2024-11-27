@@ -3,7 +3,6 @@ import { Class } from '../class/class.entity';
 import { Teacher } from '../teacher/teacher.entity';
 import { Room } from '../room/room.entity';
 
-// Define the enum for days of the week
 export enum DayOfWeek {
   MONDAY = 'Monday',
   TUESDAY = 'Tuesday',
@@ -32,15 +31,19 @@ export class Session {
   })
   day: DayOfWeek;
 
-  @ManyToOne(() => Teacher, (teacher: Teacher): Session[] => teacher.sessions, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    nullable: false,
-  })
+  @ManyToOne(
+    (): typeof Teacher => Teacher,
+    (teacher: Teacher): Session[] => teacher.sessions,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+      nullable: false,
+    },
+  )
   teacher: Teacher;
 
   @ManyToOne(
-    () => Class,
+    (): typeof Class => Class,
     (classEntity: Class): Session[] => classEntity.sessions,
     {
       onDelete: 'CASCADE',
@@ -49,8 +52,13 @@ export class Session {
   )
   class: Class;
 
-  @ManyToOne(() => Room, (room: Room): Session[] => room.sessions, {
-    nullable: true,
-  })
+  @ManyToOne(
+    (): typeof Room => Room,
+    (room: Room): Session[] => room.sessions,
+    {
+      onDelete: 'CASCADE',
+      nullable: true,
+    },
+  )
   room: Room;
 }

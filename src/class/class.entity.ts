@@ -19,22 +19,22 @@ export class Class {
   @Column({ unique: true })
   title: string;
 
-  @ManyToOne(() => Grade, (grade) => grade.classes)
+  @ManyToOne(() => Grade, (grade: Grade): Class[] => grade.classes)
   @Expose()
   grade: Grade;
 
-  @ManyToOne(() => Field, (field) => field.classes)
+  @ManyToOne(() => Field, (field: Field): Class[] => field.classes)
   @Expose()
   field: Field;
 
   @Column({ default: 30 })
   capacity: number;
 
-  @OneToMany(() => Student, (student) => student.class)
+  @OneToMany(() => Student, (student: Student): Class => student.class)
   students: Student[];
 
-  @OneToMany(() => Session, (session) => session.class, {
-    cascade: false, // Do not cascade delete for sessions when Class is deleted
+  @OneToMany(() => Session, (session: Session): Class => session.class, {
+    cascade: false,
   })
   sessions: Session[];
 }
